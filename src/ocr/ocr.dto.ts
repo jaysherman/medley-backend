@@ -5,3 +5,8 @@ export class OcrResponseDto {
 export class OcrErrorResponseDto {
   error: string;
 }
+
+export enum ExtractionMethod {
+  OCR = 'ocr',
+  OPENAI = 'openai',
+}
