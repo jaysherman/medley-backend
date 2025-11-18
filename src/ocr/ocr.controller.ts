@@ -5,48 +5,64 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
-  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '../auth/auth.guard';
 import { OcrService } from './ocr.service';
 import { OpenAIService } from './openai.service';
-import { OcrResponseDto, ExtractionMethod } from './ocr.dto';
+import { AnthropicService } from './anthropic.service';
+import { OcrResponseDto } from './ocr.dto';
 
 @Controller('api')
 export class OcrController {
   constructor(
     private ocrService: OcrService,
     private openaiService: OpenAIService,
+    private anthropicService: AnthropicService,
   ) {}
 
   @Post('ocr')
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
-  async processImage(
+  async extractWithOcr(
     @UploadedFile() file: Express.Multer.File,
-    @Query('method') method?: string,
   ): Promise<OcrResponseDto> {
     if (!file) {
       throw new BadRequestException('No image file provided');
     }
 
-    // Default to OCR if no method specified or invalid method
-    const extractionMethod =
-      method === ExtractionMethod.OPENAI
-        ? ExtractionMethod.OPENAI
-        : ExtractionMethod.OCR;
+    console.log('[OcrController] Using Tesseract OCR for text extraction');
+    const text = await this.ocrService.extractText(file);
+    return { text };
+  }
 
-    let text: string;
-
-    if (extractionMethod === ExtractionMethod.OPENAI) {
-      console.log('[OcrController] Using OpenAI for text extraction');
-      text = await this.openaiService.extractText(file);
-    } else {
-      console.log('[OcrController] Using Tesseract OCR for text extraction');
-      text = await this.ocrService.extractText(file);
+  @Post('ocr/openai')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async extractWithOpenAI(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<OcrResponseDto> {
+    if (!file) {
+      throw new BadRequestException('No image file provided');
     }
 
+    console.log('[OcrController] Using OpenAI for text extraction');
+    const text = await this.openaiService.extractText(file);
+    return { text };
+  }
+
+  @Post('ocr/anthropic')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async extractWithAnthropic(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<OcrResponseDto> {
+    if (!file) {
+      throw new BadRequestException('No image file provided');
+    }
+
+    console.log('[OcrController] Using Anthropic Claude for text extraction');
+    const text = await this.anthropicService.extractText(file);
     return { text };
   }
 }

@@ -1,7 +1,10 @@
 FROM node:18-bullseye
 
-# Install Tesseract OCR
-RUN apt-get update && apt-get install -y tesseract-ocr && rm -rf /var/lib/apt/lists/*
+# Install Tesseract OCR and ImageMagick for image preprocessing
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    imagemagick \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app

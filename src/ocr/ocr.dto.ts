@@ -9,4 +9,5 @@ export class OcrErrorResponseDto {
 export enum ExtractionMethod {
   OCR = 'ocr',
   OPENAI = 'openai',
+  ANTHROPIC = 'anthropic',
 }
