@@ -17,7 +17,7 @@ export class OcrController {
 
   @Post('ocr')
   @UseGuards(AuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('file'))
   async processImage(
     @UploadedFile() file: Express.Multer.File,
   ): Promise<OcrResponseDto> {

@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { LoginDto } from './auth.dto';
 
 @Injectable()
@@ -7,9 +8,12 @@ export class AuthService {
   private readonly demoUsername: string;
   private readonly demoPassword: string;
 
-  constructor(private jwtService: JwtService) {
-    this.demoUsername = process.env.DEMO_USERNAME || '';
-    this.demoPassword = process.env.DEMO_PASSWORD || '';
+  constructor(
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {
+    this.demoUsername = this.configService.get<string>('DEMO_USERNAME') || '';
+    this.demoPassword = this.configService.get<string>('DEMO_PASSWORD') || '';
   }
 
   async login(loginDto: LoginDto): Promise<string> {
