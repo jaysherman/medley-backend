@@ -9,9 +9,13 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173',
       'http://medley-frontend-poc.s3-website-us-west-2.amazonaws.com',
-      'https://d3jnhqfa0oaee7.cloudfront.net'
+      'https://d3jnhqfa0oaee7.cloudfront.net',
     ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
 
   const port = process.env.PORT || 4000;
