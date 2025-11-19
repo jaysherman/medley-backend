@@ -9,6 +9,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173',
       'http://medley-frontend-poc.s3-website-us-west-2.amazonaws.com',
+      'https://d3jnhqfa0oaee7.cloudfront.net'
     ],
     credentials: true,
   });
