@@ -11,6 +11,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { OcrService } from './ocr.service';
 import { OpenAIService } from './openai.service';
 import { AnthropicService } from './anthropic.service';
+import { GeminiService } from './gemini.service';
 import { OcrResponseDto } from './ocr.dto';
 
 @Controller('api')
@@ -19,6 +20,7 @@ export class OcrController {
     private ocrService: OcrService,
     private openaiService: OpenAIService,
     private anthropicService: AnthropicService,
+    private geminiService: GeminiService,
   ) {}
 
   @Post('ocr')
@@ -63,6 +65,21 @@ export class OcrController {
 
     console.log('[OcrController] Using Anthropic Claude for text extraction');
     const text = await this.anthropicService.extractText(file);
+    return { text };
+  }
+
+  @Post('ocr/gemini')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async extractWithGemini(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<OcrResponseDto> {
+    if (!file) {
+      throw new BadRequestException('No image file provided');
+    }
+
+    console.log('[OcrController] Using Google Gemini for text extraction');
+    const text = await this.geminiService.extractText(file);
     return { text };
   }
 }

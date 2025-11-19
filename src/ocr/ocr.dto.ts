@@ -10,4 +10,5 @@ export enum ExtractionMethod {
   OCR = 'ocr',
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
+  GEMINI = 'gemini',
 }
